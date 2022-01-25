@@ -74,6 +74,7 @@ func set_night():
 	sun_node.light_energy = 0
 	torch_node.light_energy = 4
 	get_node("AnimationPlayer").play("test")
+	get_node("Labyrinth").deactivate_tiles(["Wall", "Corner"])
 	yield(get_tree().create_timer(torch_burn_duration), "timeout")
 	set_day()
 
@@ -83,3 +84,4 @@ func set_day():
 	environment_node.environment = day_env
 	sun_node.light_energy = 1
 	torch_node.light_energy = 0
+	get_node("Labyrinth").activate_tiles(["Wall", "Corner"])

@@ -21,3 +21,10 @@ func create_mesh_instance():
 	mesh_instance.translate_object_local(position)
 	mesh_instance.rotate_object_local(Vector3(0, 1, 0), rotation * PI/2)
 	return mesh_instance
+
+
+func deactivate():
+	mesh_instance.hide()
+
+func activate():
+	mesh_instance.show()

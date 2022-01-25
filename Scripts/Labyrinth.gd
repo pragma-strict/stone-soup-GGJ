@@ -123,6 +123,18 @@ func instantiate_all_tiles():
 		add_child(tile['tile'].create_mesh_instance())
 
 
+func deactivate_tiles(types:Array):
+	for tile in tiles:
+		if(types.has(tile['proto']['type'])):
+			tile['tile'].deactivate()
+
+
+func activate_tiles(types:Array):
+	for tile in tiles:
+		if(types.has(tile['proto']['type'])):
+			tile['tile'].activate()
+
+
 func print_tiles():
 	for i in range(len(tiles)):
 		if(tiles[i] == null):
