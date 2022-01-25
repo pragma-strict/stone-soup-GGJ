@@ -1,7 +1,7 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Scripts/Labyrinth.gd" type="Script" id=1]
-[ext_resource path="res://Environment Settings/night_env.tres" type="Environment" id=2]
+[ext_resource path="res://Environment Settings/day_env.tres" type="Environment" id=2]
 [ext_resource path="res://Meshes/corner.obj" type="ArrayMesh" id=3]
 [ext_resource path="res://Meshes/wall.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://Meshes/path.obj" type="ArrayMesh" id=5]
@@ -15,8 +15,25 @@
 
 [sub_resource type="PlaneMesh" id=4]
 
+[sub_resource type="Animation" id=5]
+resource_name = "test"
+length = 4.0
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 4 ),
+"transitions": PoolRealArray( 0.31864, 1 ),
+"update": 0,
+"values": [ 10.0, 0.0 ]
+}
+
 [node name="GameManager" type="Node"]
 script = ExtResource( 8 )
+torch_burn_duration = 4.0
 
 [node name="Labyrinth" type="Spatial" parent="."]
 script = ExtResource( 1 )
@@ -47,6 +64,12 @@ __meta__ = {
 "_edit_lock_": true
 }
 
+[node name="TorchLight" type="OmniLight" parent="Player"]
+light_color = Color( 0.709804, 0.513726, 0.0509804, 1 )
+light_energy = 0.0
+shadow_enabled = true
+omni_attenuation = 6.72717
+
 [node name="Ground Plane" type="StaticBody" parent="."]
 __meta__ = {
 "_edit_group_": true,
@@ -75,3 +98,7 @@ shadow_bias = 0.01
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../Player/TorchLight")
+anims/test = SubResource( 5 )

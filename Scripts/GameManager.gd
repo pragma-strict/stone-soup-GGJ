@@ -4,7 +4,12 @@ var day_env = preload("res://Environment Settings/day_env.tres")
 var night_env = preload("res://Environment Settings/night_env.tres")
 var twilight_env = preload("res://Environment Settings/twilight_env.tres")
 
+export(float) var torch_burn_duration = 5
+
 var environment_node
+var sun_node
+var torch_node
+
 var time = DAY
 var can_update_time = true
 var is_mouse_captured = false
@@ -18,6 +23,8 @@ enum{
 
 func _ready():
 	environment_node = get_node("WorldEnvironment")
+	sun_node = get_node("Sun")
+	torch_node = get_node("Player/TorchLight")
 
 
 func _input(event):
@@ -46,12 +53,10 @@ func set_time(new_time):
 	if(can_update_time):
 		var is_time_valid = false
 		if(new_time == DAY):
-			time = DAY
-			environment_node.environment = day_env
+			set_day()
 			is_time_valid = true
 		elif(new_time == NIGHT):
-			time = NIGHT
-			environment_node.environment = night_env
+			set_night()
 			is_time_valid = true
 		elif(new_time == TWILIGHT):
 			time = TWILIGHT
@@ -61,3 +66,20 @@ func set_time(new_time):
 			can_update_time = false
 			yield(get_tree().create_timer(1.0), "timeout")
 			can_update_time = true
+
+
+func set_night():
+	time = NIGHT
+	environment_node.environment = night_env
+	sun_node.light_energy = 0
+	torch_node.light_energy = 4
+	get_node("AnimationPlayer").play("test")
+	yield(get_tree().create_timer(torch_burn_duration), "timeout")
+	set_day()
+
+
+func set_day():
+	time = DAY
+	environment_node.environment = day_env
+	sun_node.light_energy = 1
+	torch_node.light_energy = 0
