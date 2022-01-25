@@ -1,11 +1,13 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scripts/Labyrinth.gd" type="Script" id=1]
+[ext_resource path="res://Environment Settings/night_env.tres" type="Environment" id=2]
 [ext_resource path="res://Meshes/corner.obj" type="ArrayMesh" id=3]
 [ext_resource path="res://Meshes/wall.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://Meshes/path.obj" type="ArrayMesh" id=5]
-[ext_resource path="res://Scripts/Camera.gd" type="Script" id=6]
+[ext_resource path="res://Scripts/PlayerCam.gd" type="Script" id=6]
 [ext_resource path="res://Scripts/Player.gd" type="Script" id=7]
+[ext_resource path="res://Scripts/GameManager.gd" type="Script" id=8]
 
 [sub_resource type="CapsuleShape" id=2]
 
@@ -13,7 +15,8 @@
 
 [sub_resource type="PlaneMesh" id=4]
 
-[node name="Scene" type="Spatial"]
+[node name="GameManager" type="Node"]
+script = ExtResource( 8 )
 
 [node name="Labyrinth" type="Spatial" parent="."]
 script = ExtResource( 1 )
@@ -64,3 +67,11 @@ material/0 = null
 __meta__ = {
 "_edit_lock_": true
 }
+
+[node name="Sun" type="DirectionalLight" parent="."]
+transform = Transform( 0.290803, -0.956782, -0.00126769, 0.0618847, 0.0174869, 0.99793, -0.95478, -0.290279, 0.0642954, -0.0146017, 9.34512, 0.0110121 )
+shadow_enabled = true
+shadow_bias = 0.01
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource( 2 )
