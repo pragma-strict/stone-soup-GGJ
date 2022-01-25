@@ -12,7 +12,3 @@ data_*/
 
 # Extra mesh data
 *.mtl
-
-# Blender files
-*.blend
-*.blend1
