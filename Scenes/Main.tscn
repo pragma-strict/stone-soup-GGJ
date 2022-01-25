@@ -36,8 +36,10 @@ script = ExtResource( 8 )
 torch_burn_duration = 4.0
 
 [node name="Labyrinth" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.962774, 0 )
 script = ExtResource( 1 )
 graph_dimensions = Vector2( 15, 15 )
+scale = 2.0
 tile_meshes = {
 "Corner": ExtResource( 3 ),
 "Door": ExtResource( 5 ),

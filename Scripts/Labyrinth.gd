@@ -2,6 +2,7 @@ extends Node
 
 # How many node wide is the graph?
 export(Vector2) var graph_dimensions
+export(float) var scale
 
 export(Dictionary) var tile_meshes = {
 	"Path" : Mesh,
@@ -108,6 +109,7 @@ func generate_tile(index:int, proto:Dictionary, rot:int):
 	var position = Array2D.to_coordinate_vec3(index, tilemap_dimensions)
 	position.x -= round(tilemap_dimensions.x / 2)
 	position.z -= round(tilemap_dimensions.y / 2)
+	position *= scale
 	tiles[index] = {
 		'proto' : proto,
 		'pos' : position,
@@ -120,7 +122,7 @@ func generate_tile(index:int, proto:Dictionary, rot:int):
 func instantiate_all_tiles():
 	for tile in tiles:
 		tile['tile'] = MazeTileBase.new(tile['proto']['type'], tile['proto']['mesh'], tile['pos'], tile['rot'])
-		add_child(tile['tile'].create_mesh_instance())
+		add_child(tile['tile'].create_mesh_instance(scale))
 
 
 func deactivate_tiles(types:Array):

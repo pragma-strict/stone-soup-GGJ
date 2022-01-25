@@ -15,11 +15,12 @@ func _init(_type:String, _mesh:Mesh, _position:Vector3, _rotation:int):
 	rotation = _rotation
 
 
-func create_mesh_instance():
+func create_mesh_instance(scale):
 	mesh_instance = MeshInstance.new()
 	mesh_instance.mesh = mesh
 	mesh_instance.translate_object_local(position)
 	mesh_instance.rotate_object_local(Vector3(0, 1, 0), rotation * PI/2)
+	mesh_instance.scale_object_local(Vector3(scale, scale, scale))
 	return mesh_instance
 
 
