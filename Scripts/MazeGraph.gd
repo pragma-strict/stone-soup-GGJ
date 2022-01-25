@@ -14,7 +14,7 @@ var num_nodes
 func _init(_size:IntVector2):
 	size = _size
 	num_nodes = _size.x * _size.y
-	for i in range(num_nodes):
+	for _i in range(num_nodes):
 		nodes.push_back( { 'visited' : false } )
 		edges.push_back( [-1, -1, -1, -1] )
 
