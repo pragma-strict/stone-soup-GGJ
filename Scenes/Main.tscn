@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Scripts/Labyrinth.gd" type="Script" id=1]
 [ext_resource path="res://Environment Settings/day_env.tres" type="Environment" id=2]
@@ -6,7 +6,7 @@
 [ext_resource path="res://Meshes/wall.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://Meshes/path.obj" type="ArrayMesh" id=5]
 [ext_resource path="res://Scripts/PlayerCam.gd" type="Script" id=6]
-[ext_resource path="res://Scripts/Player.gd" type="Script" id=7]
+[ext_resource path="res://Scripts/PlayerController.gd" type="Script" id=7]
 [ext_resource path="res://Scripts/GameManager.gd" type="Script" id=8]
 [ext_resource path="res://Scenes/Wall Tile.tscn" type="PackedScene" id=9]
 [ext_resource path="res://Scenes/Floor Tile.tscn" type="PackedScene" id=10]
@@ -14,8 +14,6 @@
 [ext_resource path="res://Scenes/Door Tile.tscn" type="PackedScene" id=12]
 
 [sub_resource type="CylinderShape" id=6]
-
-[sub_resource type="PlaneMesh" id=4]
 
 [sub_resource type="Animation" id=5]
 resource_name = "test"
@@ -30,8 +28,12 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 4 ),
 "transitions": PoolRealArray( 0.31864, 1 ),
 "update": 0,
-"values": [ 16.0, 0.0 ]
+"values": [ 50.0, 0.0 ]
 }
+
+[sub_resource type="PlaneMesh" id=4]
+
+[sub_resource type="BoxShape" id=7]
 
 [node name="GameManager" type="Node"]
 script = ExtResource( 8 )
@@ -61,10 +63,11 @@ script = ExtResource( 7 )
 __meta__ = {
 "_edit_group_": true
 }
-movement_speed = 10.0
+jump_strength = 14.0
+movement_speed = 8.0
 
 [node name="PlayerCam" type="Camera" parent="Player"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.898164, 0.384132 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.69836, 0 )
 script = ExtResource( 6 )
 
 [node name="CollisionShape" type="CollisionShape" parent="Player"]
@@ -73,18 +76,10 @@ shape = SubResource( 6 )
 
 [node name="TorchLight" type="OmniLight" parent="Player"]
 light_color = Color( 0.709804, 0.513726, 0.0509804, 1 )
-light_energy = 10.0
+light_energy = 0.0
 shadow_enabled = true
-omni_attenuation = 6.72717
-
-[node name="MeshInstance" type="MeshInstance" parent="."]
-transform = Transform( 25, 0, 0, 0, 1, 0, 0, 0, 25, 0, 0, 0 )
-mesh = SubResource( 4 )
-skeleton = NodePath("")
-material/0 = null
-__meta__ = {
-"_edit_lock_": true
-}
+omni_range = 11.054
+omni_attenuation = 6.9644
 
 [node name="Sun" type="DirectionalLight" parent="."]
 transform = Transform( 0.290803, -0.956782, -0.00126769, 0.0618847, 0.0174869, 0.99793, -0.95478, -0.290279, 0.0642954, -0.0146017, 9.34512, 0.0110121 )
@@ -97,3 +92,18 @@ environment = ExtResource( 2 )
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 root_node = NodePath("../Player/TorchLight")
 anims/test = SubResource( 5 )
+
+[node name="Ground Plane" type="StaticBody" parent="."]
+transform = Transform( 25, 0, 0, 0, 1, 0, 0, 0, 25, 0, 0, 0 )
+
+[node name="MeshInstance" type="MeshInstance" parent="Ground Plane"]
+mesh = SubResource( 4 )
+skeleton = NodePath("")
+material/0 = null
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="CollisionShape" type="CollisionShape" parent="Ground Plane"]
+transform = Transform( 25, 0, 0, 0, 1, 0, 0, 0, 25, 0, -1, 0 )
+shape = SubResource( 7 )

@@ -5,8 +5,7 @@ class_name MazeTileBase
 var type:String
 var position:Vector3
 var rotation:int
-var mesh:Mesh
-var mesh_instance:MeshInstance
+var scene_instance
 
 var packed_scene:PackedScene
 
@@ -18,24 +17,17 @@ func _init(_type:String, _scene:PackedScene, _position:Vector3, _rotation:int):
 
 
 func create_scene_instance(scale):
-	var scene = packed_scene.instance()
-	scene.translate_object_local(position)
-	scene.rotate_object_local(Vector3(0, 1, 0), rotation * PI/2)
-	scene.scale_object_local(Vector3(scale, scale, scale))
-	return scene
-
-
-func create_mesh_instance(scale):
-	mesh_instance = MeshInstance.new()
-	mesh_instance.mesh = mesh
-	mesh_instance.translate_object_local(position)
-	mesh_instance.rotate_object_local(Vector3(0, 1, 0), rotation * PI/2)
-	mesh_instance.scale_object_local(Vector3(scale, scale, scale))
-	return mesh_instance
+	scene_instance = packed_scene.instance()
+	scene_instance.translate_object_local(position)
+	scene_instance.rotate_object_local(Vector3(0, 1, 0), rotation * PI/2)
+	scene_instance.scale_object_local(Vector3(scale, scale, scale))
+	return scene_instance
 
 
 func deactivate():
-	mesh_instance.hide()
+	scene_instance.get_node("MeshInstance").hide()
+	scene_instance.get_node("CollisionShape").disabled = true
 
 func activate():
-	mesh_instance.show()
+	scene_instance.get_node("MeshInstance").show()
+	scene_instance.get_node("CollisionShape").disabled = false
