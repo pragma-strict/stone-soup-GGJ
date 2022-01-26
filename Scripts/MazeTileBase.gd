@@ -8,11 +8,21 @@ var rotation:int
 var mesh:Mesh
 var mesh_instance:MeshInstance
 
+var packed_scene:PackedScene
 
-func _init(_type:String, _mesh:Mesh, _position:Vector3, _rotation:int):
-	mesh = _mesh
+func _init(_type:String, _scene:PackedScene, _position:Vector3, _rotation:int):
+	type = _type
+	packed_scene = _scene
 	position = _position
 	rotation = _rotation
+
+
+func create_scene_instance(scale):
+	var scene = packed_scene.instance()
+	scene.translate_object_local(position)
+	scene.rotate_object_local(Vector3(0, 1, 0), rotation * PI/2)
+	scene.scale_object_local(Vector3(scale, scale, scale))
+	return scene
 
 
 func create_mesh_instance(scale):

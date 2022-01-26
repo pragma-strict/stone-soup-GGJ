@@ -4,6 +4,7 @@ var day_env = preload("res://Environment Settings/day_env.tres")
 var night_env = preload("res://Environment Settings/night_env.tres")
 var twilight_env = preload("res://Environment Settings/twilight_env.tres")
 
+
 export(float) var torch_burn_duration = 5
 
 var environment_node

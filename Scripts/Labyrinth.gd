@@ -1,8 +1,15 @@
 extends Node
 
-# How many node wide is the graph?
-export(Vector2) var graph_dimensions
+
+export(Vector2) var graph_dimensions # How many node wide is the graph?
 export(float) var scale
+
+export(Dictionary) var tile_scenes = {
+	"Path" : PackedScene,
+	"Wall" : PackedScene,
+	"Door" : PackedScene,
+	"Corner" : PackedScene
+}
 
 export(Dictionary) var tile_meshes = {
 	"Path" : Mesh,
@@ -38,8 +45,7 @@ func initialize_tile_protos():
 	var keys = tile_meshes.keys()
 	for i in range(len(keys)):
 		tile_prototypes[keys[i]] = {
-			'type' : keys[i],
-			'mesh' : tile_meshes[keys[i]]
+			'type' : keys[i]
 		}
 
 
@@ -56,10 +62,10 @@ func generate_tiles_from_graph_node(node_index:int):
 	var tile_index = graph.graph_to_tile_index(node_index, tilemap_dimensions)
 	
 	# Collect protos for clarity
-	var corner_proto = tile_prototypes['Corner']
-	var path_proto = tile_prototypes['Path']
-	var wall_proto = tile_prototypes['Wall']
-	var door_proto = tile_prototypes['Door']
+	var corner_proto = 'Corner'
+	var path_proto = 'Path'
+	var wall_proto = 'Wall'
+	var door_proto = 'Door'
 	
 	# Get tile indices
 	var corner_tl = Array2D.get_diagonal(tile_index, IntVector2.new(-1, 1), tilemap_dimensions)
@@ -105,13 +111,13 @@ func generate_tiles_from_graph_node(node_index:int):
 	
 
 # Generates a single tile
-func generate_tile(index:int, proto:Dictionary, rot:int):
+func generate_tile(index:int, type:String, rot:int):
 	var position = Array2D.to_coordinate_vec3(index, tilemap_dimensions)
 	position.x -= round(tilemap_dimensions.x / 2)
 	position.z -= round(tilemap_dimensions.y / 2)
 	position *= scale
 	tiles[index] = {
-		'proto' : proto,
+		'type' : type,
 		'pos' : position,
 		'rot' : rot,
 		'tile' : null	 # This will be replaced with a MazeTileBase object
@@ -121,19 +127,21 @@ func generate_tile(index:int, proto:Dictionary, rot:int):
 # Create and add all mesh instances as children
 func instantiate_all_tiles():
 	for tile in tiles:
-		tile['tile'] = MazeTileBase.new(tile['proto']['type'], tile['proto']['mesh'], tile['pos'], tile['rot'])
-		add_child(tile['tile'].create_mesh_instance(scale))
+		var type = tile['type']
+		var scene = tile_scenes[type]
+		tile['tile'] = MazeTileBase.new(type, scene, tile['pos'], tile['rot'])
+		add_child(tile['tile'].create_scene_instance(scale))
 
 
 func deactivate_tiles(types:Array):
 	for tile in tiles:
-		if(types.has(tile['proto']['type'])):
+		if(types.has(tile['type'])):
 			tile['tile'].deactivate()
 
 
 func activate_tiles(types:Array):
 	for tile in tiles:
-		if(types.has(tile['proto']['type'])):
+		if(types.has(tile['type'])):
 			tile['tile'].activate()
 
 

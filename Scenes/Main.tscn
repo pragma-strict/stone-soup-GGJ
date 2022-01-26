@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://Scripts/Labyrinth.gd" type="Script" id=1]
 [ext_resource path="res://Environment Settings/day_env.tres" type="Environment" id=2]
@@ -8,10 +8,12 @@
 [ext_resource path="res://Scripts/PlayerCam.gd" type="Script" id=6]
 [ext_resource path="res://Scripts/Player.gd" type="Script" id=7]
 [ext_resource path="res://Scripts/GameManager.gd" type="Script" id=8]
+[ext_resource path="res://Scenes/Wall Tile.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Scenes/Floor Tile.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Scenes/Corner Tile.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Scenes/Door Tile.tscn" type="PackedScene" id=12]
 
-[sub_resource type="CapsuleShape" id=2]
-
-[sub_resource type="BoxShape" id=3]
+[sub_resource type="CylinderShape" id=6]
 
 [sub_resource type="PlaneMesh" id=4]
 
@@ -28,7 +30,7 @@ tracks/0/keys = {
 "times": PoolRealArray( 0, 4 ),
 "transitions": PoolRealArray( 0.31864, 1 ),
 "update": 0,
-"values": [ 10.0, 0.0 ]
+"values": [ 16.0, 0.0 ]
 }
 
 [node name="GameManager" type="Node"]
@@ -39,7 +41,13 @@ torch_burn_duration = 4.0
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.962774, 0 )
 script = ExtResource( 1 )
 graph_dimensions = Vector2( 15, 15 )
-scale = 2.0
+scale = 3.0
+tile_scenes = {
+"Corner": ExtResource( 11 ),
+"Door": ExtResource( 12 ),
+"Path": ExtResource( 10 ),
+"Wall": ExtResource( 9 )
+}
 tile_meshes = {
 "Corner": ExtResource( 3 ),
 "Door": ExtResource( 5 ),
@@ -53,41 +61,26 @@ script = ExtResource( 7 )
 __meta__ = {
 "_edit_group_": true
 }
+movement_speed = 10.0
 
 [node name="PlayerCam" type="Camera" parent="Player"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.898164, 0.384132 )
 script = ExtResource( 6 )
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="CollisionShape" type="CollisionShape" parent="Player"]
-shape = SubResource( 2 )
-__meta__ = {
-"_edit_lock_": true
-}
+transform = Transform( 0.1, 0, 0, 0, 1, 0, 0, 0, 0.1, 0, 0, 0 )
+shape = SubResource( 6 )
 
 [node name="TorchLight" type="OmniLight" parent="Player"]
 light_color = Color( 0.709804, 0.513726, 0.0509804, 1 )
-light_energy = 0.0
+light_energy = 10.0
 shadow_enabled = true
 omni_attenuation = 6.72717
 
-[node name="Ground Plane" type="StaticBody" parent="."]
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
-}
-
-[node name="CollisionShape" type="CollisionShape" parent="Ground Plane"]
-transform = Transform( 100, 0, 0, 0, -4.37114e-06, 1, 0, -100, -4.37114e-08, 0, 0, 0 )
-shape = SubResource( 3 )
-__meta__ = {
-"_edit_lock_": true
-}
-
-[node name="MeshInstance" type="MeshInstance" parent="Ground Plane"]
+[node name="MeshInstance" type="MeshInstance" parent="."]
 transform = Transform( 25, 0, 0, 0, 1, 0, 0, 0, 25, 0, 0, 0 )
 mesh = SubResource( 4 )
+skeleton = NodePath("")
 material/0 = null
 __meta__ = {
 "_edit_lock_": true
