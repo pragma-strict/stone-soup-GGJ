@@ -58,7 +58,7 @@ static func to_coordinate(index:int, size:IntVector2):
 # Convert coordinate into index
 static func to_index(coordinate:IntVector2, size:IntVector2):
 	if(coordinate.x * coordinate.y < size.x * size.y):
-		return coordinate.y * size.x + coordinate.x
+		return clamp(coordinate.y * size.x + coordinate.x, 0, size.x * size.y -1)
 	return null
 
 

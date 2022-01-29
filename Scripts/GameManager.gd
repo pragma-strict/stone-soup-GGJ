@@ -46,9 +46,6 @@ func _input(event):
 	
 	if (Input.is_key_pressed(KEY_ESCAPE)):
 		get_tree().quit()
-	
-	if (Input.is_action_just_pressed("generate_path")):
-		$"Enemy".generate_path_to_player()
 
 
 func toggle_day_night():

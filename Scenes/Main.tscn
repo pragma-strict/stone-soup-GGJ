@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://Scripts/Labyrinth.gd" type="Script" id=1]
 [ext_resource path="res://Environment Settings/day_env.tres" type="Environment" id=2]
@@ -12,6 +12,7 @@
 [ext_resource path="res://Scenes/Floor Tile.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Scenes/Corner Tile.tscn" type="PackedScene" id=11]
 [ext_resource path="res://Scenes/Door Tile.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Scenes/Boundary Tile.tscn" type="PackedScene" id=13]
 
 [sub_resource type="CylinderShape" id=8]
 
@@ -45,8 +46,8 @@ torch_burn_duration = 4.0
 script = ExtResource( 1 )
 graph_dimensions = Vector2( 16, 16 )
 scale = 3.0
-max_pathfinding_iterations = 500
 tile_scenes = {
+"Boundary": ExtResource( 13 ),
 "Corner": ExtResource( 11 ),
 "Door": ExtResource( 12 ),
 "Path": ExtResource( 10 ),

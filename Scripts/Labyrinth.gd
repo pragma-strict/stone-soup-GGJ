@@ -9,7 +9,8 @@ export(Dictionary) var tile_scenes = {
 	"Path" : PackedScene,
 	"Wall" : PackedScene,
 	"Door" : PackedScene,
-	"Corner" : PackedScene
+	"Corner" : PackedScene,
+	"Boundary" : PackedScene
 }
 
 export(Dictionary) var NPC_scenes = {
@@ -61,6 +62,7 @@ func generate_tiles():
 	tiles.resize(num_tiles)
 	for i in range(graph.num_nodes):
 		generate_tiles_from_graph_node(i)
+	embed_rect(IntVector2.new(3, 1), IntVector2.new(10, 7), "Boundary")
 
 
 # Generates all 9 tiles in the kernel of a single graph node
@@ -113,8 +115,8 @@ func generate_tiles_from_graph_node(node_index:int):
 	if(edges[Direction.WEST] == -1):
 		generate_tile(west, wall_proto, Direction.WEST)
 	else:
-		generate_tile(west, door_proto, Direction.WEST)
-	
+		generate_tile(west, door_proto, Direction.WEST)	
+
 
 # Generates a single tile
 func generate_tile(index:int, type:String, rot:int):
@@ -124,6 +126,32 @@ func generate_tile(index:int, type:String, rot:int):
 		'rot' : rot,
 		'tile' : null	 # This will be replaced with a MazeTileBase object
 	}
+
+
+# Set a rectangle of tiles to a certain type.
+func embed_rect(start:IntVector2, end:IntVector2, type:String):
+	embed_line(start, IntVector2.new(end.x, start.y), type)
+	embed_line(start, IntVector2.new(start.x, end.y), type)
+	embed_line(IntVector2.new(end.x, start.y), end, type)
+	embed_line(IntVector2.new(start.x, end.y), end, type)
+
+
+# Set a line of tiles to a certain type. Line cannot be diagonal. Call before tile instantiation!
+func embed_line(start:IntVector2, end:IntVector2, type:String):
+	if(start.x != end.x and start.y != end.y):
+		return
+	var current_index = Array2D.to_index(start, tilemap_dimensions)
+	var target_index = Array2D.to_index(end, tilemap_dimensions)
+	var dir = (IntVector2.new(end.x - start.x, end.y - start.y)).normalize()
+	tiles[current_index]['type'] = type
+	print("Line from ", start.to_string(), " to ", end.to_string(), " in direction ", dir.to_string())
+	var iter = 0
+	while(current_index != target_index and iter < 100):
+		current_index = Array2D.get_adjacent(current_index, Direction.vec_to_dir(dir), tilemap_dimensions)
+		tiles[current_index]['type'] = type
+		iter += 1
+	if(iter > 90):
+		print("iter limit")
 
 
 func spawn_at_tile(var scene:PackedScene, var tile_types:Array):

@@ -51,6 +51,11 @@ func generate_DFS(start_index:int):
 	return
 
 
+# Embeds a square in the graph by 
+func embed_unconnected_square(width:int):
+	pass
+
+
 # Return an ordered list of indices to visit in the traversal from start->end
 func find_path(start_index:int, end_index:int, max_iterations:int):
 	if(!is_valid_index(start_index) or !is_valid_index(end_index)):

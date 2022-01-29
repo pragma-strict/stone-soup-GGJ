@@ -12,3 +12,6 @@ data_*/
 
 # Extra mesh data
 *.mtl
+
+# Misc Assets
+Misc Assets/*
