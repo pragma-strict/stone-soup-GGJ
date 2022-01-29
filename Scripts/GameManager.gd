@@ -26,14 +26,19 @@ func _ready():
 	environment_node = get_node("WorldEnvironment")
 	sun_node = get_node("Sun")
 	torch_node = get_node("Player/TorchLight")
+	get_node("Labyrinth").deactivate_tiles(["Wall", "Corner"])
 
 
 func _input(event):
 	if (event is InputEventMouseButton):
-		is_mouse_captured = true
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		if(event.is_action_pressed("right_click")):
+			is_mouse_captured = false
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		else:
+			is_mouse_captured = true
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		
-	if(Input.is_action_pressed("move_up")):
+	if(Input.is_action_pressed("g")):
 		toggle_day_night()
 			
 	if (Input.is_action_pressed("ui_fullscreen")):
@@ -41,6 +46,9 @@ func _input(event):
 	
 	if (Input.is_key_pressed(KEY_ESCAPE)):
 		get_tree().quit()
+	
+	if (Input.is_action_just_pressed("generate_path")):
+		$"Enemy".generate_path_to_player()
 
 
 func toggle_day_night():

@@ -7,29 +7,15 @@ onready var Player = get_parent()
 const CAMERA_TURN_SPEED = 200
 
 func _ready():
-	## Tell Godot that we want to handle input
 	set_process_input(true)
 
 func look_updown_rotation(rotation = 0):
-	"""
-	Returns a new Vector3 which contains only the x direction
-	We'll use this vector to compute the final 3D rotation later
-	"""
 	var toReturn = self.get_rotation() + Vector3(rotation, 0, 0)
-
-	##
-	## We don't want the player to be able to bend over backwards
-	## neither to be able to look under their arse.
-	## Here we'll clamp the vertical look to 90° up and down
 	toReturn.x = clamp(toReturn.x, PI / -2, PI / 2)
 
 	return toReturn
 
 func look_leftright_rotation(rotation = 0):
-	"""
-	Returns a new Vector3 which contains only the y direction
-	We'll use this vector to compute the final 3D rotation later
-	"""
 	return Player.get_rotation() + Vector3(0, rotation, 0)
 
 func _input(event):
@@ -42,16 +28,3 @@ func _input(event):
 		## Now we can simply set our y-rotation for the camera, and let godot
 		## handle the transformation of both together
 		self.set_rotation(look_updown_rotation(event.relative.y / -CAMERA_TURN_SPEED))
-
-
-func _enter_tree():
-	"""
-	Hide the mouse when we start
-	"""
-	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
-
-func _leave_tree():
-	"""
-	Show the mouse when we leave
-	"""
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

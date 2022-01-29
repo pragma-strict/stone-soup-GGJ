@@ -1,5 +1,3 @@
-extends Node
-
 class_name Direction
 
 enum{
@@ -39,3 +37,11 @@ static func get_opposite(dir):
 		return NORTH
 	if(dir == WEST):
 		return EAST
+
+static func as_string(dir):
+	match(dir):
+		0 : return "NORTH"
+		1 : return "EAST"
+		2 : return "SOUTH"
+		3 : return "WEST"
+	return "Invalid input"

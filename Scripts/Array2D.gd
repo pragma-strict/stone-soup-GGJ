@@ -1,14 +1,10 @@
-extends Node
 
-# Wrapper for the array class for use in 2D contexts
+# ===================================================================== #
+# A bunch of helper functions for using arrays to store 2D spatial data #
+# ===================================================================== #
+
+
 class_name Array2D
-
-var array = []
-var current_index
-
-func _init(new_arr:Array):
-	array = new_arr
-	current_index = 0
 
 
 static func get_diagonal(index:int, dir:IntVector2, size:IntVector2):
@@ -55,6 +51,7 @@ static func get_adjacent(index:int, dir:int, size:IntVector2):
 static func to_coordinate(index:int, size:IntVector2):
 	if(index >= 0 and index < (size.x * size.y)):
 		return IntVector2.new(index % size.x, floor(index / size.x))
+#		return IntVector2.new(clamp(index % size.x, 0, size.x -1), clamp(floor(index / size.x), 0, size.y -1))
 	return null
 
 
@@ -63,13 +60,25 @@ static func to_index(coordinate:IntVector2, size:IntVector2):
 	if(coordinate.x * coordinate.y < size.x * size.y):
 		return coordinate.y * size.x + coordinate.x
 	return null
-	
+
+
 static func to_coordinate_vec2(index:int, size:IntVector2):
 	if(index >= 0 and index < (size.x * size.y)):
 		return Vector2(index % size.x, floor(index / size.x))
 	return null
 
+
 static func to_coordinate_vec3(index:int, size:IntVector2):
 	if(index >= 0 and index < (size.x * size.y)):
 		return Vector3(index % size.x, 0, floor(index / size.x))
 	return null
+
+
+# Remove the vertical component of the vector
+static func vec3_to_vec2(v:Vector3):
+	return Vector2(v.x, v.z)
+
+
+# Add the vertical component as 0
+static func vec2_to_vec3(v:Vector2):
+	return Vector3(v.x, 0, v.y)

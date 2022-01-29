@@ -1,19 +1,19 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://Scripts/Labyrinth.gd" type="Script" id=1]
 [ext_resource path="res://Environment Settings/day_env.tres" type="Environment" id=2]
-[ext_resource path="res://Meshes/corner.obj" type="ArrayMesh" id=3]
-[ext_resource path="res://Meshes/wall.obj" type="ArrayMesh" id=4]
-[ext_resource path="res://Meshes/path.obj" type="ArrayMesh" id=5]
+[ext_resource path="res://Scenes/Enemy.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Materials/Green.tres" type="Material" id=4]
+[ext_resource path="res://Scripts/DebugCameraController.gd" type="Script" id=5]
 [ext_resource path="res://Scripts/PlayerCam.gd" type="Script" id=6]
-[ext_resource path="res://Scripts/PlayerController.gd" type="Script" id=7]
+[ext_resource path="res://Scripts/Player.gd" type="Script" id=7]
 [ext_resource path="res://Scripts/GameManager.gd" type="Script" id=8]
 [ext_resource path="res://Scenes/Wall Tile.tscn" type="PackedScene" id=9]
 [ext_resource path="res://Scenes/Floor Tile.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Scenes/Corner Tile.tscn" type="PackedScene" id=11]
 [ext_resource path="res://Scenes/Door Tile.tscn" type="PackedScene" id=12]
 
-[sub_resource type="CylinderShape" id=6]
+[sub_resource type="CylinderShape" id=8]
 
 [sub_resource type="Animation" id=5]
 resource_name = "test"
@@ -35,26 +35,25 @@ tracks/0/keys = {
 
 [sub_resource type="BoxShape" id=7]
 
+[sub_resource type="PrismMesh" id=9]
+
 [node name="GameManager" type="Node"]
 script = ExtResource( 8 )
 torch_burn_duration = 4.0
 
 [node name="Labyrinth" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.962774, 0 )
 script = ExtResource( 1 )
-graph_dimensions = Vector2( 15, 15 )
+graph_dimensions = Vector2( 16, 16 )
 scale = 3.0
+max_pathfinding_iterations = 500
 tile_scenes = {
 "Corner": ExtResource( 11 ),
 "Door": ExtResource( 12 ),
 "Path": ExtResource( 10 ),
 "Wall": ExtResource( 9 )
 }
-tile_meshes = {
-"Corner": ExtResource( 3 ),
-"Door": ExtResource( 5 ),
-"Path": ExtResource( 5 ),
-"Wall": ExtResource( 4 )
+NPC_scenes = {
+"Rolem": ExtResource( 3 )
 }
 
 [node name="Player" type="KinematicBody" parent="."]
@@ -63,8 +62,9 @@ script = ExtResource( 7 )
 __meta__ = {
 "_edit_group_": true
 }
-jump_strength = 14.0
-movement_speed = 8.0
+jump_strength = 12.0
+movement_speed = 7.5
+gravity = 0.5
 
 [node name="PlayerCam" type="Camera" parent="Player"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.69836, 0 )
@@ -72,11 +72,11 @@ script = ExtResource( 6 )
 
 [node name="CollisionShape" type="CollisionShape" parent="Player"]
 transform = Transform( 0.1, 0, 0, 0, 1, 0, 0, 0, 0.1, 0, 0, 0 )
-shape = SubResource( 6 )
+shape = SubResource( 8 )
 
 [node name="TorchLight" type="OmniLight" parent="Player"]
 light_color = Color( 0.709804, 0.513726, 0.0509804, 1 )
-light_energy = 0.0
+light_energy = 50.0
 shadow_enabled = true
 omni_range = 11.054
 omni_attenuation = 6.9644
@@ -107,3 +107,19 @@ __meta__ = {
 [node name="CollisionShape" type="CollisionShape" parent="Ground Plane"]
 transform = Transform( 25, 0, 0, 0, 1, 0, 0, 0, 25, 0, -1, 0 )
 shape = SubResource( 7 )
+
+[node name="PathTarget" type="MeshInstance" parent="."]
+transform = Transform( 0.828129, 0, -0.0560538, 0, 0.5, 0, 0.560538, 0, 0.0828129, 0, -1.07991, 0 )
+mesh = SubResource( 9 )
+material/0 = ExtResource( 4 )
+
+[node name="LineRenderer" type="ImmediateGeometry" parent="."]
+
+[node name="DebugCam" type="Spatial" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.2477, 0 )
+
+[node name="DebugCam" type="Camera" parent="DebugCam"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.04503, 0 )
+script = ExtResource( 5 )
+mouse_sensitivity = 0.5
+movement_speed = 20.0

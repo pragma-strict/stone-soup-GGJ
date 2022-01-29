@@ -16,6 +16,9 @@ func add(other:IntVector2):
 func print_vec():
 	print("x: ", x, ", y: ", y)
 
+func to_string():
+	return (str("[x: ", x, ", y: ", y, "]"))
+
 func to_vec3():
 	return Vector3(x, 0, y)
 

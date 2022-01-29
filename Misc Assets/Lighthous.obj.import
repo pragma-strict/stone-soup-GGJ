@@ -1,0 +1,20 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/Lighthous.obj-eae0d16975b4318740d351a4bfa2debe.mesh"
+
+[deps]
+
+files=[ "res://.import/Lighthous.obj-eae0d16975b4318740d351a4bfa2debe.mesh" ]
+
+source_file="res://Misc Assets/Lighthous.obj"
+dest_files=[ "res://.import/Lighthous.obj-eae0d16975b4318740d351a4bfa2debe.mesh", "res://.import/Lighthous.obj-eae0d16975b4318740d351a4bfa2debe.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 1, 1, 1 )
+offset_mesh=Vector3( 0, 0, 0 )
+octahedral_compression=true
+optimize_mesh_flags=4286

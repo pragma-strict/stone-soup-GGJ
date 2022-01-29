@@ -1,6 +1,6 @@
 extends Node
 
-class_name MazeTileBase
+class_name MazeTile
 
 var type:String
 var position:Vector3
@@ -27,6 +27,7 @@ func create_scene_instance(scale):
 func deactivate():
 	scene_instance.get_node("MeshInstance").hide()
 	scene_instance.get_node("CollisionShape").disabled = true
+
 
 func activate():
 	scene_instance.get_node("MeshInstance").show()
