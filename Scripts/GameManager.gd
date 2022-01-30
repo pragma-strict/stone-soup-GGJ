@@ -14,6 +14,7 @@ var torch_node
 var time = DAY
 var can_update_time = true
 var is_mouse_captured = false
+var screen_mode_lock = false
 
 enum{
 	DAY,
@@ -26,7 +27,7 @@ func _ready():
 	environment_node = get_node("WorldEnvironment")
 	sun_node = get_node("Sun")
 	torch_node = get_node("Player/TorchLight")
-	get_node("Labyrinth").deactivate_tiles(["Wall", "Corner"])
+#	get_node("Labyrinth").deactivate_tiles(["Wall", "Corner"])
 
 
 func _input(event):
@@ -42,7 +43,7 @@ func _input(event):
 		toggle_day_night()
 			
 	if (Input.is_action_pressed("ui_fullscreen")):
-		OS.window_fullscreen = !OS.window_fullscreen
+		toggle_fullscreen()
 	
 	if (Input.is_key_pressed(KEY_ESCAPE)):
 		get_tree().quit()
@@ -79,8 +80,8 @@ func set_night():
 	environment_node.environment = night_env
 	sun_node.light_energy = 0
 	torch_node.light_energy = 4
-	get_node("AnimationPlayer").play("test")
-	get_node("Labyrinth").deactivate_tiles(["Wall", "Corner"])
+	$"AnimationPlayer".play("test")
+	$"Labyrinth".set_night()
 	yield(get_tree().create_timer(torch_burn_duration), "timeout")
 	set_day()
 
@@ -90,4 +91,22 @@ func set_day():
 	environment_node.environment = day_env
 	sun_node.light_energy = 1
 	torch_node.light_energy = 0
-	get_node("Labyrinth").activate_tiles(["Wall", "Corner"])
+	$"Labyrinth".set_day()
+
+
+func toggle_fullscreen():
+	if(!screen_mode_lock):
+		OS.window_fullscreen = !OS.window_fullscreen
+		screen_mode_lock = true
+		yield(get_tree().create_timer(1.0), "timeout")
+		screen_mode_lock = false
+
+
+func _on_Timer_timeout():
+	var foo = $"PathTarget"
+	var player_pos = $"Player".global_transform.origin
+	var player_tile = $"Labyrinth".get_tile_from_position(player_pos)
+#	print("Current tile: ", player_tile)
+	var tile_pos = $"Labyrinth".get_position_from_tile(player_tile)
+	foo.global_transform.origin = tile_pos
+	foo.global_transform.origin.y = 3

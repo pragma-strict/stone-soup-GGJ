@@ -21,30 +21,78 @@ onready var line_renderer:ImmediateGeometry = $"../LineRenderer"
 
 var tile_prototypes = {}
 
-var graph
+var graph:MazeGraph
+var rng
 
 var tiles = []
 var tilemap_dimensions
 var num_tiles
 
-var rng
+# A list of the children (walls and corners) that need to be toggled during day and night
+var dynamic_types = ['Wall', 'Corner']
+var dynamic_children = []
+
+var sanctum_graph_bounds = [IntVector2.new(18, 18), IntVector2.new(22, 22)]
+var sanctum_tile_bounds = []
+var b1_graph_bounds = [IntVector2.new(13, 13), IntVector2.new(27, 27)]
+var b1_tile_bounds = []
+var b2_graph_bounds = [IntVector2.new(6, 6), IntVector2.new(34, 34)]
+var b2_tile_bounds = []
+var b3_graph_bounds = [IntVector2.new(0, 0), IntVector2.new(40, 40)]
+var b3_tile_bounds = []
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	rng = RandomNumberGenerator.new()
+	rng.randomize()
 	
 	graph_dimensions = IntVector2.new(graph_dimensions.x, graph_dimensions.y)
 	graph = MazeGraph.new(graph_dimensions)
-	graph.generate_DFS(0)
 	tilemap_dimensions = IntVector2.new(graph_dimensions.x * 2 + 1, graph_dimensions.y * 2 + 1)
 	num_tiles = tilemap_dimensions.x * tilemap_dimensions.y
+	
+	# Generate tile coordinates of boundaries based on their graph coordinates
+	sanctum_tile_bounds.push_back(graph_to_tile_coordinates(sanctum_graph_bounds[0]))
+	sanctum_tile_bounds.push_back(graph_to_tile_coordinates(sanctum_graph_bounds[1]))
+	sanctum_tile_bounds[0].add(IntVector2.new(-1, -1))
+	sanctum_tile_bounds[1].add(IntVector2.new(1, 1))
+	b1_tile_bounds.push_back(graph_to_tile_coordinates(b1_graph_bounds[0]))
+	b1_tile_bounds.push_back(graph_to_tile_coordinates(b1_graph_bounds[1]))
+	b2_tile_bounds.push_back(graph_to_tile_coordinates(b2_graph_bounds[0]))
+	b2_tile_bounds.push_back(graph_to_tile_coordinates(b2_graph_bounds[1]))
+	b3_tile_bounds.push_back(graph_to_tile_coordinates(b3_graph_bounds[0]))
+	b3_tile_bounds.push_back(graph_to_tile_coordinates(b3_graph_bounds[1]))
+	
+	# Embed disconnected sections in the graph
+	graph.embed_disconnected_rect(b3_graph_bounds[0], b3_graph_bounds[1])
+	graph.embed_disconnected_rect(b2_graph_bounds[0], b2_graph_bounds[1])
+	graph.embed_disconnected_rect(b1_graph_bounds[0], b1_graph_bounds[1])
+	graph.embed_disconnected_rect(sanctum_graph_bounds[0], sanctum_graph_bounds[1])
+	embed_doors_into_graph()
+	
+	# Generate the graph from specified origin points
+	graph.generate_DFS(IntVector2.new(sanctum_graph_bounds[0].x -1, sanctum_graph_bounds[0].y -1))
+	graph.generate_DFS(IntVector2.new(b1_graph_bounds[0].x -1, b1_graph_bounds[0].y -1))
+	graph.generate_DFS(IntVector2.new(b2_graph_bounds[0].x -1, b2_graph_bounds[0].y -1))
+	graph.clear_all_node_properties()
 
+	# Generate the tiles from the graph
 	initialize_tile_protos()
-	generate_tiles()
+	generate_tiles_from_graph()
+	embed_doors_into_tilemap()
+	
+	# Embed some special tiles to account for boundaries and sanctum
+	embed_sanctum_protos()
+	embed_rect(b1_tile_bounds[0], b1_tile_bounds[1], "Empty")
+	embed_rect(b2_tile_bounds[0], b2_tile_bounds[1], "Empty")
+	embed_rect(b3_tile_bounds[0], b3_tile_bounds[1], "Empty")
+	
+	# Actually spawn the tiles
 	instantiate_all_tiles()
-	spawn_at_tile(NPC_scenes['Rolem'], ['Path'])
-	render_graph_as_lines()
+	
+	# Spawn enemies
+	spawn_at_random_tile(NPC_scenes['Rolem'], ['Path'])
 
 
 # Sets up the dictionaries that hold all the data for each type of tile
@@ -54,15 +102,56 @@ func initialize_tile_protos():
 		tile_prototypes[keys[i]] = {
 			'type' : keys[i]
 		}
+	tile_prototypes['Empty'] = {
+		'type' : 'Empty'
+	}
 
 
 # Generates all tiles
-func generate_tiles():
+func generate_tiles_from_graph():
 	tiles.clear()
 	tiles.resize(num_tiles)
 	for i in range(graph.num_nodes):
-		generate_tiles_from_graph_node(i)
-	embed_rect(IntVector2.new(3, 1), IntVector2.new(10, 7), "Boundary")
+		generate_tiles_from_graph_node(i)	
+
+
+func embed_sanctum_protos():
+	var s_begin = sanctum_tile_bounds[0]
+	var s_end = sanctum_tile_bounds[1]
+	embed_rect(s_begin, s_end, "Empty")
+	for i in range(5):
+		s_begin.add(IntVector2.new(1, 1))
+		s_end.add(IntVector2.new(-1, -1))
+		embed_rect(s_begin, s_end, "Empty")
+
+
+func embed_doors_into_graph():
+	# West doors
+	graph.embed_connected_line(IntVector2.new(0, 20), IntVector2.new(1, 20))
+	graph.embed_connected_line(IntVector2.new(5, 20), IntVector2.new(7, 20))
+	graph.embed_connected_line(IntVector2.new(12, 20), IntVector2.new(14, 20))
+	
+	# East doors
+	graph.embed_connected_line(IntVector2.new(40, 20), IntVector2.new(39, 20))
+	graph.embed_connected_line(IntVector2.new(35, 20), IntVector2.new(33, 20))
+	graph.embed_connected_line(IntVector2.new(28, 20), IntVector2.new(26, 20))
+	
+	# North doors
+	graph.embed_connected_line(IntVector2.new(20, 0), IntVector2.new(20, 1))
+	graph.embed_connected_line(IntVector2.new(20, 5), IntVector2.new(20, 7))
+	graph.embed_connected_line(IntVector2.new(20, 12), IntVector2.new(20, 14))
+	
+	# South doors
+	graph.embed_connected_line(IntVector2.new(20, 40), IntVector2.new(20, 39))
+	graph.embed_connected_line(IntVector2.new(20, 35), IntVector2.new(20, 33))
+	graph.embed_connected_line(IntVector2.new(20, 28), IntVector2.new(20, 26))	
+
+
+func embed_doors_into_tilemap():
+	embed_line(IntVector2.new(41, 0), IntVector2.new(41, 1), 'Empty')
+	embed_line(IntVector2.new(41, 81), IntVector2.new(41, 82), 'Empty')
+	embed_line(IntVector2.new(0, 41), IntVector2.new(1, 41), 'Empty')
+	embed_line(IntVector2.new(81, 41), IntVector2.new(82, 41), 'Empty')
 
 
 # Generates all 9 tiles in the kernel of a single graph node
@@ -144,7 +233,6 @@ func embed_line(start:IntVector2, end:IntVector2, type:String):
 	var target_index = Array2D.to_index(end, tilemap_dimensions)
 	var dir = (IntVector2.new(end.x - start.x, end.y - start.y)).normalize()
 	tiles[current_index]['type'] = type
-	print("Line from ", start.to_string(), " to ", end.to_string(), " in direction ", dir.to_string())
 	var iter = 0
 	while(current_index != target_index and iter < 100):
 		current_index = Array2D.get_adjacent(current_index, Direction.vec_to_dir(dir), tilemap_dimensions)
@@ -154,21 +242,24 @@ func embed_line(start:IntVector2, end:IntVector2, type:String):
 		print("iter limit")
 
 
-func spawn_at_tile(var scene:PackedScene, var tile_types:Array):
+func spawn_at_random_tile(var scene:PackedScene, var tile_types:Array):
 	var candidate_tiles = []
 	for i in range(len(tiles)):
 		if tile_types.has(tiles[i]['type']):
 			candidate_tiles.push_back(i)
-	var random_tile_index = rng.randi_range(0, len(candidate_tiles))
+	var random_tile_index = candidate_tiles[rng.randi_range(0, len(candidate_tiles))]
 	var tile_world_pos = get_position_from_tile(random_tile_index)
+	print("Spawning rolem at tile: ", Array2D.to_coordinate(random_tile_index, tilemap_dimensions).to_string(), " from a list of ", len(candidate_tiles), " options")
+	print("Spawning Rolem at position: ", tile_world_pos)
 	add_child(instance_scene(scene, tile_world_pos))
 
 
 func instance_scene(var scene:PackedScene, var pos:Vector3):
 	var scene_instance = scene.instance()
-	scene_instance.translate_object_local(pos)
+	scene_instance.global_transform.origin = pos
 #	scene_instance.rotate_object_local(Vector3(0, 1, 0), rotation * PI/2)
 	scene_instance.scale_object_local(Vector3(scale, scale, scale))
+#	scene_instance.global_transform = scene_instance.global_transform.scaled(Vector3(scale, scale, scale))
 	return scene_instance
 
 
@@ -199,8 +290,8 @@ func straigh_path_exists(var from:Vector3, var to:Vector3):
 
 func get_tile_from_position(var pos):
 	pos /= scale
-	pos.x += round(tilemap_dimensions.x / 2) + 0.5
-	pos.z += round(tilemap_dimensions.y / 2) + 0.5
+	pos.x += round(tilemap_dimensions.x / 2) + 0.0
+	pos.z += round(tilemap_dimensions.y / 2) + 0.0
 	return Array2D.to_index(IntVector2.new(pos.x, pos.z), tilemap_dimensions)
 
 
@@ -236,13 +327,57 @@ func tile_to_graph_index(index:int):
 	return Array2D.to_index(gr_coordinate, graph_dimensions)
 
 
+func graph_to_tile_coordinates(coords:IntVector2):
+	var graph_index = Array2D.to_index(coords, graph_dimensions)
+	var tile_index = graph_to_tile_index(graph_index)
+	return Array2D.to_coordinate(tile_index, tilemap_dimensions)
+
+
+func tile_to_graph_coordinates(coords:IntVector2):
+	var tile_index = Array2D.to_index(coords, tilemap_dimensions)
+	var graph_index = tile_to_graph_index(tile_index)
+	return Array2D.to_coordinate(graph_index, graph_dimensions)
+
+
 # Create and add all mesh instances as children
 func instantiate_all_tiles():
 	for tile in tiles:
 		var type = tile['type']
-		var scene = tile_scenes[type]
-		tile['tile'] = MazeTile.new(type, scene, tile['pos'], tile['rot'])
-		add_child(tile['tile'].create_scene_instance(scale))
+		if(type != 'Empty'):	# Don't spawn anything for the empty tiles
+			var scene = tile_scenes[type]
+			tile['tile'] = MazeTile.new(type, scene, tile['pos'], tile['rot'])
+			var instance = tile['tile'].create_scene_instance(scale)
+			if(dynamic_types.has(type)):
+				dynamic_children.push_back(instance)
+			add_child(instance)
+
+
+func set_night():
+	var current_tile = 0
+	while (true):
+		var count = 0
+		while(count < 50):
+			if(current_tile == len(dynamic_children)):
+				return
+			dynamic_children[current_tile].get_node("MeshInstance").hide()
+			dynamic_children[current_tile].get_node("CollisionShape").disabled = true
+			count += 1
+			current_tile += 1
+		yield(get_tree().create_timer(0.01), "timeout")
+
+
+func set_day():
+	var current_tile = 0
+	while (true):
+		var count = 0
+		while(count < 25):
+			if(current_tile == len(dynamic_children)):
+				return
+			dynamic_children[current_tile].get_node("MeshInstance").show()
+			dynamic_children[current_tile].get_node("CollisionShape").disabled = false
+			count += 1
+			current_tile += 1
+		yield(get_tree().create_timer(0.01), "timeout")
 
 
 func get_ground_height():

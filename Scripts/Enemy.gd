@@ -52,17 +52,18 @@ func generate_path_to_player():
 #	print(path)
 	if(len(path) > 1 and path[1] == next_target):
 		path_node += 1
-	labyrinth.render_graph_as_lines()
+#	labyrinth.render_graph_as_lines()
 	update_player_line_of_sight()
 
 
 func update_player_line_of_sight():
 	var space_state = get_world().direct_space_state
 	var result = space_state.intersect_ray(transform.origin, player.get_pos(), [self])
-	if(result['collider'] == player and labyrinth.straigh_path_exists(transform.origin, player.get_pos())):
-		can_see_player = true	# Only set this true if the enemy is in an unimpeded path
-	else:
-		can_see_player = false
+	if(result.has('collider')):	
+		if(result['collider'] == player and labyrinth.straigh_path_exists(transform.origin, player.get_pos())):
+			can_see_player = true	# Only set this true if the enemy is in an unimpeded path
+		else:
+			can_see_player = false
 
 
 func _on_Timer_timeout():

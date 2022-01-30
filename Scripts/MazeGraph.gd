@@ -22,7 +22,8 @@ func _init(_size:IntVector2):
 
 
 # Assign edges to this graph based a DFS
-func generate_DFS(start_index:int):
+func generate_DFS(origin_coordinates:IntVector2):
+	var start_index = Array2D.to_index(origin_coordinates, size)
 	if not is_valid_index(start_index):
 		return
 	
@@ -39,7 +40,7 @@ func generate_DFS(start_index:int):
 			var rand_dir = (dir + rand_offset) % 4
 			var neighbor = Array2D.get_adjacent(current_node, rand_dir, size)
 			if(is_valid_index(neighbor) and !is_node_visited(neighbor)):
-				create_edge(current_node, rand_dir, neighbor)
+				create_edge(current_node, rand_dir)
 				traversal.push_back(neighbor)
 				found_unvisited_neighbor = true
 				break
@@ -47,13 +48,40 @@ func generate_DFS(start_index:int):
 		if(!found_unvisited_neighbor):
 			traversal.pop_back()
 	
-	unvisit_all_nodes()
+#	unvisit_all_nodes()
 	return
 
 
-# Embeds a square in the graph by 
-func embed_unconnected_square(width:int):
-	pass
+# Reserve a of cells as unconnected and visited. Call before tile generation!
+func embed_disconnected_line(start:IntVector2, end:IntVector2):
+	if(start.x != end.x and start.y != end.y):
+		return
+	var current_index = Array2D.to_index(start, size)
+	var target_index = Array2D.to_index(end, size)
+	var dir = (IntVector2.new(end.x - start.x, end.y - start.y)).normalize()
+#	nodes[current_index]
+	while(current_index != target_index):
+		current_index = Array2D.get_adjacent(current_index, Direction.vec_to_dir(dir), size)
+		visit_node(current_index)
+
+
+# Reserve a hollow rectangle of cells as unconnected and visited. Call before generation!
+func embed_disconnected_rect(start:IntVector2, end:IntVector2):
+	embed_disconnected_line(start, IntVector2.new(end.x, start.y))
+	embed_disconnected_line(start, IntVector2.new(start.x, end.y))
+	embed_disconnected_line(IntVector2.new(end.x, start.y), end)
+	embed_disconnected_line(IntVector2.new(start.x, end.y), end)
+
+
+func embed_connected_line(start:IntVector2, end:IntVector2):
+	if(start.x != end.x and start.y != end.y):
+		return
+	var current_index = Array2D.to_index(start, size)
+	var target_index = Array2D.to_index(end, size)
+	var dir = (IntVector2.new(end.x - start.x, end.y - start.y)).normalize()
+	while(current_index != target_index):
+		create_edge(current_index, Direction.vec_to_dir(dir))	# This is going to go one too far
+		current_index = Array2D.get_adjacent(current_index, Direction.vec_to_dir(dir), size)
 
 
 # Return an ordered list of indices to visit in the traversal from start->end
@@ -134,7 +162,8 @@ func is_straight_line_path(from:int, to:int):
 
 
 # Create an edge in the given direction
-func create_edge(from_index:int, dir, to_index:int):
+func create_edge(from_index:int, dir):
+	var to_index = Array2D.get_adjacent(from_index, dir, size)
 	edges[from_index][dir] = to_index
 	edges[to_index][Direction.get_opposite(dir)] = from_index
 
@@ -241,6 +270,14 @@ func node_at(index:int):
 
 func get_edges(index:int):
 	return edges[index]
+
+
+func clear_node(index:int):	# Remove all edges from a node
+	edges[index] = [-1, -1, -1, -1]
+
+
+func remove_edge(index:int, dir:int):
+	edges[index][dir] = -1
 
 
 func get_num_nodes():
