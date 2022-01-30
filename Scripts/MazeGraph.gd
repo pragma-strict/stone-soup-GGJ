@@ -47,8 +47,6 @@ func generate_DFS(origin_coordinates:IntVector2):
 		
 		if(!found_unvisited_neighbor):
 			traversal.pop_back()
-	
-#	unvisit_all_nodes()
 	return
 
 
@@ -59,7 +57,6 @@ func embed_disconnected_line(start:IntVector2, end:IntVector2):
 	var current_index = Array2D.to_index(start, size)
 	var target_index = Array2D.to_index(end, size)
 	var dir = (IntVector2.new(end.x - start.x, end.y - start.y)).normalize()
-#	nodes[current_index]
 	while(current_index != target_index):
 		current_index = Array2D.get_adjacent(current_index, Direction.vec_to_dir(dir), size)
 		visit_node(current_index)
@@ -88,7 +85,7 @@ func embed_connected_line(start:IntVector2, end:IntVector2):
 func find_path(start_index:int, end_index:int, max_iterations:int):
 	if(!is_valid_index(start_index) or !is_valid_index(end_index)):
 		return []
-	
+	unvisit_all_nodes()
 	var queue = [start_index]
 	var iterations = 0
 	var found_target = false

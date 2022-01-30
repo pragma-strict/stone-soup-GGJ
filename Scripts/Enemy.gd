@@ -14,9 +14,10 @@ var reached_floor = false
 var can_see_player = false
 
 export(int) var movement_speed = 4
+var rotation_speed = 0.01
 
 onready var player = $"../../Player"
-onready var labyrinth = get_parent()
+onready var labyrinth:Labyrinth = get_parent()
 
 
 func _physics_process(delta):
@@ -30,9 +31,8 @@ func _physics_process(delta):
 		next_target = path[path_node]
 		dir_to_target = (next_target - Array2D.vec3_to_vec2(global_transform.origin))
 		
-		if(dir_to_target.length() < 0.5):	# If reached current target
+		if(dir_to_target.length() < 1):	# If reached current target
 			path_node += 1		# Increment path node
-		
 		else:
 			velocity = Array2D.vec2_to_vec3(dir_to_target.normalized() * movement_speed)
 	else:
@@ -43,17 +43,38 @@ func _physics_process(delta):
 			reached_floor = true
 		else:
 			velocity.y = -10
-	move_and_slide(velocity, Vector3.UP)	
+	move_and_slide(velocity, Vector3.UP)
+	rotate_to_move_direction()
+
+
+# Rotate the enemy in the direction of movement
+func rotate_to_move_direction():
+	if(velocity.length() >= 0.001):
+		var global_pos = global_transform.origin
+		var player_pos = global_pos + velocity.normalized()
+		var rotation_speed = 0.1
+		var wtransform = global_transform.looking_at(Vector3(player_pos.x,global_pos.y,player_pos.z),Vector3(0,1,0))
+		var wrotation = Quat(global_transform.basis).slerp(Quat(wtransform.basis), rotation_speed)
+
+		global_transform = Transform(Basis(wrotation), global_transform.origin)
+		
+
 
 
 func generate_path_to_player():
-	path = labyrinth.find_path_2d(transform.origin, player.global_transform.origin)
+	path = labyrinth.find_path_2d(global_transform.origin, player.global_transform.origin)
+	var tile = labyrinth.get_tile_from_position(global_transform.origin)
+	var node_type = labyrinth.tiles[tile]['type']
+#	print("Current tile: ", node_type)
 	path_node = 0
-#	print(path)
+	if(len(path) > 0):
+		print("Found path")
+	else:
+		print("Unable to find path")
 	if(len(path) > 1 and path[1] == next_target):
 		path_node += 1
 #	labyrinth.render_graph_as_lines()
-	update_player_line_of_sight()
+	
 
 
 func update_player_line_of_sight():
@@ -68,6 +89,7 @@ func update_player_line_of_sight():
 
 func _on_Timer_timeout():
 	generate_path_to_player()
+	update_player_line_of_sight()
 
 
 func _on_Area_body_entered(body):

@@ -27,6 +27,7 @@ func _ready():
 	environment_node = get_node("WorldEnvironment")
 	sun_node = get_node("Sun")
 	torch_node = get_node("Player/TorchLight")
+#	$"Labyrinth".calculate_floor_height(get_world().direct_space_state)
 #	get_node("Labyrinth").deactivate_tiles(["Wall", "Corner"])
 
 
@@ -107,6 +108,6 @@ func _on_Timer_timeout():
 	var player_pos = $"Player".global_transform.origin
 	var player_tile = $"Labyrinth".get_tile_from_position(player_pos)
 #	print("Current tile: ", player_tile)
-	var tile_pos = $"Labyrinth".get_position_from_tile(player_tile)
-	foo.global_transform.origin = tile_pos
-	foo.global_transform.origin.y = 3
+#	var tile_pos = $"Labyrinth".get_position_from_tile(player_tile)
+#	foo.global_transform.origin = tile_pos
+#	foo.global_transform.origin.y = 3

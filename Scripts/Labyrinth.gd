@@ -1,5 +1,6 @@
 extends Node
 
+class_name Labyrinth
 
 export(Vector2) var graph_dimensions # How many node wide is the graph?
 export(float) var scale
@@ -27,6 +28,7 @@ var rng
 var tiles = []
 var tilemap_dimensions
 var num_tiles
+var ground_height = 15
 
 # A list of the children (walls and corners) that need to be toggled during day and night
 var dynamic_types = ['Wall', 'Corner']
@@ -92,7 +94,8 @@ func _ready():
 	instantiate_all_tiles()
 	
 	# Spawn enemies
-	spawn_at_random_tile(NPC_scenes['Rolem'], ['Path'])
+#	spawn_at_random_tile(NPC_scenes['Rolem'], ['Path'])
+	spawn_at_tile(NPC_scenes['Rolem'], IntVector2.new(35, 39))
 
 
 # Sets up the dictionaries that hold all the data for each type of tile
@@ -254,6 +257,13 @@ func spawn_at_random_tile(var scene:PackedScene, var tile_types:Array):
 	add_child(instance_scene(scene, tile_world_pos))
 
 
+func spawn_at_tile(var scene:PackedScene, var tile_coordinates:IntVector2):
+	var tile_index = Array2D.to_index(tile_coordinates, tilemap_dimensions)
+	var tile_world_pos = get_position_from_tile(tile_index)
+	tile_world_pos.y = ground_height
+	add_child(instance_scene(scene, tile_world_pos))
+
+
 func instance_scene(var scene:PackedScene, var pos:Vector3):
 	var scene_instance = scene.instance()
 	scene_instance.global_transform.origin = pos
@@ -268,6 +278,7 @@ func find_path(var from:Vector3, var to:Vector3):
 	var path = []
 	var from_g_index = get_graph_node_from_position(from)
 	var to_g_index = get_graph_node_from_position(to)
+#	print("Finding path from ", Array2D.to_coordinate(from_g_index, graph_dimensions).to_string(), " to ", Array2D.to_coordinate(to_g_index, graph_dimensions).to_string())
 	var index_path = graph.find_path(from_g_index, to_g_index, max_pathfinding_iterations)
 	for i in range(len(index_path)):
 		path.push_back(get_position_from_graph_node(index_path[len(index_path) - i -1]))
@@ -356,7 +367,7 @@ func set_night():
 	var current_tile = 0
 	while (true):
 		var count = 0
-		while(count < 50):
+		while(count < 150):
 			if(current_tile == len(dynamic_children)):
 				return
 			dynamic_children[current_tile].get_node("MeshInstance").hide()
@@ -378,10 +389,6 @@ func set_day():
 			count += 1
 			current_tile += 1
 		yield(get_tree().create_timer(0.01), "timeout")
-
-
-func get_ground_height():
-	return "you picked the wrong function, buddy."
 
 
 func deactivate_tiles(types:Array):
