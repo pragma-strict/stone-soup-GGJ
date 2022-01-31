@@ -5,5 +5,11 @@
 [node name="Rolem" instance=ExtResource( 1 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0961, 0 )
 
+[node name="Armature003" parent="." index="0"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0109264, -0.250585, 0.551347 )
+
 [node name="Armature" parent="Armature003/Bone4" index="1"]
 transform = Transform( 1, 0, 0, 0, 0, 1, 0, -1, 0, -0.573288, 0.508142, 1.61661 )
+
+[node name="AnimationPlayer" parent="." index="1"]
+playback_speed = 0.0

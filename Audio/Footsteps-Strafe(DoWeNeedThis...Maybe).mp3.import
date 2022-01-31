@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Footsteps-Strafe(DoWeNeedThis...Maybe).mp3-c50a6782251a95002c28d926166174dd.mp3str"
+
+[deps]
+
+source_file="res://Audio/Footsteps-Strafe(DoWeNeedThis...Maybe).mp3"
+dest_files=[ "res://.import/Footsteps-Strafe(DoWeNeedThis...Maybe).mp3-c50a6782251a95002c28d926166174dd.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

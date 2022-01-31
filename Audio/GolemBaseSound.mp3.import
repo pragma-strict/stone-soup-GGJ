@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/GolemBaseSound.mp3-a2b5c9bf6c809f086a956b0f2030b695.mp3str"
+
+[deps]
+
+source_file="res://Audio/GolemBaseSound.mp3"
+dest_files=[ "res://.import/GolemBaseSound.mp3-a2b5c9bf6c809f086a956b0f2030b695.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

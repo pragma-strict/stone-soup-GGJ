@@ -67,10 +67,10 @@ func generate_path_to_player():
 	var node_type = labyrinth.tiles[tile]['type']
 #	print("Current tile: ", node_type)
 	path_node = 0
-	if(len(path) > 0):
-		print("Found path")
-	else:
-		print("Unable to find path")
+#	if(len(path) > 0):
+#		print("Found path")
+#	else:
+#		print("Unable to find path")
 	if(len(path) > 1 and path[1] == next_target):
 		path_node += 1
 #	labyrinth.render_graph_as_lines()

@@ -82,3 +82,7 @@ static func vec3_to_vec2(v:Vector3):
 # Add the vertical component as 0
 static func vec2_to_vec3(v:Vector2):
 	return Vector3(v.x, 0, v.y)
+
+
+static func is_valid_coordinate(coord:IntVector2, size:IntVector2):
+	return coord.x >= 0 and coord.x < size.x -1 and coord.y >= 0 and coord.y < size.y -1

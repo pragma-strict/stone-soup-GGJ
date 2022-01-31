@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Stone Slide Sound Effects.mp3-123967ce987fcc307e04799916c0e81b.mp3str"
+
+[deps]
+
+source_file="res://Audio/golemmakeup/Stone Slide Sound Effects.mp3"
+dest_files=[ "res://.import/Stone Slide Sound Effects.mp3-123967ce987fcc307e04799916c0e81b.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

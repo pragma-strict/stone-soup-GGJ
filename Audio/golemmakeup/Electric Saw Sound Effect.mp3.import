@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Electric Saw Sound Effect.mp3-e3174eec8f3381bd4315ed7f10a43ca8.mp3str"
+
+[deps]
+
+source_file="res://Audio/golemmakeup/Electric Saw Sound Effect.mp3"
+dest_files=[ "res://.import/Electric Saw Sound Effect.mp3-e3174eec8f3381bd4315ed7f10a43ca8.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

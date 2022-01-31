@@ -9,7 +9,6 @@ export(float) var torch_burn_duration = 5
 
 var environment_node
 var sun_node
-var torch_node
 
 var time = DAY
 var can_update_time = true
@@ -26,7 +25,6 @@ enum{
 func _ready():
 	environment_node = get_node("WorldEnvironment")
 	sun_node = get_node("Sun")
-	torch_node = get_node("Player/TorchLight")
 #	$"Labyrinth".calculate_floor_height(get_world().direct_space_state)
 #	get_node("Labyrinth").deactivate_tiles(["Wall", "Corner"])
 
@@ -80,18 +78,15 @@ func set_night():
 	time = NIGHT
 	environment_node.environment = night_env
 	sun_node.light_energy = 0
-	torch_node.light_energy = 4
-	$"AnimationPlayer".play("test")
 	$"Labyrinth".set_night()
-	yield(get_tree().create_timer(torch_burn_duration), "timeout")
-	set_day()
+#	yield(get_tree().create_timer(torch_burn_duration), "timeout")
+#	set_day()
 
 
 func set_day():
 	time = DAY
 	environment_node.environment = day_env
 	sun_node.light_energy = 1
-	torch_node.light_energy = 0
 	$"Labyrinth".set_day()
 
 
@@ -101,13 +96,3 @@ func toggle_fullscreen():
 		screen_mode_lock = true
 		yield(get_tree().create_timer(1.0), "timeout")
 		screen_mode_lock = false
-
-
-func _on_Timer_timeout():
-	var foo = $"PathTarget"
-	var player_pos = $"Player".global_transform.origin
-	var player_tile = $"Labyrinth".get_tile_from_position(player_pos)
-#	print("Current tile: ", player_tile)
-#	var tile_pos = $"Labyrinth".get_position_from_tile(player_tile)
-#	foo.global_transform.origin = tile_pos
-#	foo.global_transform.origin.y = 3

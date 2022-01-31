@@ -11,7 +11,21 @@ export(Dictionary) var tile_scenes = {
 	"Wall" : PackedScene,
 	"Door" : PackedScene,
 	"Corner" : PackedScene,
-	"Boundary" : PackedScene
+	"Boundary" : PackedScene,
+	"Resin" : PackedScene,
+	"Empty" : PackedScene
+}
+
+export(Dictionary) var L1_settings = {
+	"resin_prob" : 0.5
+}
+
+export(Dictionary) var L2_settings = {
+	"resin_prob" : 0.2
+}
+
+export(Dictionary) var L3_settings = {
+	"resin_prob" : 0.07
 }
 
 export(Dictionary) var NPC_scenes = {
@@ -19,6 +33,11 @@ export(Dictionary) var NPC_scenes = {
 }
 
 onready var line_renderer:ImmediateGeometry = $"../LineRenderer"
+onready var b1 = $"../B1"
+onready var b2 = $"../B2"
+onready var b3 = $"../B3"
+onready var anim = $"LabAnimPlayer"
+onready var player = $"../Player"
 
 var tile_prototypes = {}
 
@@ -26,12 +45,13 @@ var graph:MazeGraph
 var rng
 
 var tiles = []
+var tile_instances = []
 var tilemap_dimensions
 var num_tiles
 var ground_height = 15
 
 # A list of the children (walls and corners) that need to be toggled during day and night
-var dynamic_types = ['Wall', 'Corner']
+var dynamic_types = ['Wall', 'Corner', 'Resin']
 var dynamic_children = []
 
 var sanctum_graph_bounds = [IntVector2.new(18, 18), IntVector2.new(22, 22)]
@@ -164,8 +184,8 @@ func generate_tiles_from_graph_node(node_index:int):
 	# Collect protos for clarity
 	var corner_proto = 'Corner'
 	var path_proto = 'Path'
-	var wall_proto = 'Wall'
 	var door_proto = 'Door'
+	var wall_proto = 'Wall'
 	
 	# Get tile indices
 	var corner_tl = Array2D.get_diagonal(tile_index, IntVector2.new(-1, 1), tilemap_dimensions)
@@ -210,8 +230,54 @@ func generate_tiles_from_graph_node(node_index:int):
 		generate_tile(west, door_proto, Direction.WEST)	
 
 
+func get_level_from_graph_node(node_index:int):
+	var node_coords = Array2D.to_coordinate(node_index, graph_dimensions)
+	if(node_coords.x > b1_graph_bounds[0].x and node_coords.x < b1_graph_bounds[1].x):
+		if(node_coords.y > b1_graph_bounds[0].y and node_coords.y < b1_graph_bounds[1].y):
+			return 1
+	if(node_coords.x > b2_graph_bounds[0].x and node_coords.x < b2_graph_bounds[1].x):
+		if(node_coords.y > b2_graph_bounds[0].y and node_coords.y < b2_graph_bounds[1].y):
+			return 2
+	if(node_coords.x > b3_graph_bounds[0].x and node_coords.x < b3_graph_bounds[1].x):
+		if(node_coords.y > b3_graph_bounds[0].y and node_coords.y < b3_graph_bounds[1].y):
+			return 3
+	return -1
+
+
+func get_level_from_tile_index(tile_index:int):
+	var tile_coords = Array2D.to_coordinate(tile_index, tilemap_dimensions)
+	if(tile_coords.x > b1_tile_bounds[0].x and tile_coords.x < b1_tile_bounds[1].x):
+		if(tile_coords.y > b1_tile_bounds[0].y and tile_coords.y < b1_tile_bounds[1].y):
+			return 1
+	if(tile_coords.x > b2_tile_bounds[0].x and tile_coords.x < b2_tile_bounds[1].x):
+		if(tile_coords.y > b2_tile_bounds[0].y and tile_coords.y < b2_tile_bounds[1].y):
+			return 2
+	if(tile_coords.x > b3_tile_bounds[0].x and tile_coords.x < b3_tile_bounds[1].x):
+		if(tile_coords.y > b3_tile_bounds[0].y and tile_coords.y < b3_tile_bounds[1].y):
+			return 3
+	return -1
+
+
+func get_property_from_level(level:int, property:String):
+	if(level == 1):
+		return L1_settings[property]
+	if(level == 2):
+		return L2_settings[property]
+	if(level == 3):
+		return L3_settings[property]
+	return -1
+
+
 # Generates a single tile
 func generate_tile(index:int, type:String, rot:int):
+	# Figure out whether walls should be swapped with resin tiles
+	if(type == 'Wall'):
+		var level = get_level_from_tile_index(index)
+		var resin_chance = get_property_from_level(level, 'resin_prob')
+		if(rng.randf() <= resin_chance):
+			type = 'Resin'
+	
+	# Assign the proto tile
 	tiles[index] = {
 		'type' : type,
 		'pos' : get_position_from_tile(index),
@@ -243,6 +309,41 @@ func embed_line(start:IntVector2, end:IntVector2, type:String):
 		iter += 1
 	if(iter > 90):
 		print("iter limit")
+
+
+func get_line_indices(start:IntVector2, end:IntVector2, types):
+	if(start.x != end.x and start.y != end.y):
+		return
+	var current_index = Array2D.to_index(start, tilemap_dimensions)
+	var target_index = Array2D.to_index(end, tilemap_dimensions)
+	var dir = (IntVector2.new(end.x - start.x, end.y - start.y)).normalize()
+	var indices = []
+	while(current_index != target_index):
+		if(types.has(tiles[current_index]['type'])):
+			indices.push_back(current_index)
+		current_index = Array2D.get_adjacent(current_index, Direction.vec_to_dir(dir), tilemap_dimensions)
+		
+	if(types.has(tiles[current_index]['type'])):	# Add the last one
+		indices.push_back(current_index)
+	return indices
+
+
+func get_rect_indices(start:IntVector2, end:IntVector2, types):
+	var indices = []
+	indices += get_line_indices(start, IntVector2.new(end.x, start.y), types)
+	indices += get_line_indices(start, IntVector2.new(start.x, end.y), types)
+	indices += get_line_indices(IntVector2.new(end.x, start.y), end, types)
+	indices += get_line_indices(IntVector2.new(start.x, end.y), end, types)
+	return indices
+
+
+func get_square_centered_at(origin:IntVector2, radius:int, types):
+	var indices = []
+	var begin = IntVector2.new(origin.x - radius, origin.y - radius)
+	var end = IntVector2.new(origin.x + radius, origin.y + radius)
+	if(Array2D.is_valid_coordinate(begin, tilemap_dimensions) and Array2D.is_valid_coordinate(end, tilemap_dimensions)):
+		indices += get_rect_indices(begin, end, types)
+	return indices
 
 
 func spawn_at_random_tile(var scene:PackedScene, var tile_types:Array):
@@ -354,20 +455,73 @@ func tile_to_graph_coordinates(coords:IntVector2):
 func instantiate_all_tiles():
 	for tile in tiles:
 		var type = tile['type']
-		if(type != 'Empty'):	# Don't spawn anything for the empty tiles
-			var scene = tile_scenes[type]
-			tile['tile'] = MazeTile.new(type, scene, tile['pos'], tile['rot'])
-			var instance = tile['tile'].create_scene_instance(scale)
-			if(dynamic_types.has(type)):
-				dynamic_children.push_back(instance)
-			add_child(instance)
+		var scene = tile_scenes[type]
+		tile['tile'] = MazeTile.new(type, scene, tile['pos'], tile['rot'])
+		var instance = tile['tile'].create_scene_instance(scale)
+		if(dynamic_types.has(type)):
+			dynamic_children.push_back(instance)
+		tile_instances.push_back(instance)
+		add_child(instance)
 
 
 func set_night():
+	anim.play("Boundary Sink")
+	deactivate_tiles()
+
+
+func set_day():
+	anim.play("Boundary Rise")
 	var current_tile = 0
-	while (true):
+	var finished = false
+	while (!finished):
 		var count = 0
-		while(count < 150):
+		while(count < 25):
+			if(current_tile == len(dynamic_children)):
+				finished = true
+				break
+			dynamic_children[current_tile].get_node("MeshInstance").show()
+			dynamic_children[current_tile].get_node("CollisionShape").disabled = false
+			count += 1
+			current_tile += 1
+		yield(get_tree().create_timer(0.01), "timeout")
+	var player_tile = get_tile_from_position(player.global_transform.origin)
+	var kill_types = ['Empty']
+	kill_types += dynamic_types
+	if(kill_types.has(tiles[player_tile]['type'])):
+		player.kill()
+
+
+func disable_boundaries():
+	b1.get_node("MeshInstance").hide()
+	b2.get_node("MeshInstance").hide()
+	b3.get_node("MeshInstance").hide()
+
+
+func enable_boundaries():
+	b1.get_node("MeshInstance").show()
+	b2.get_node("MeshInstance").show()
+	b3.get_node("MeshInstance").show()
+
+
+func deactivate_tiles():
+	var player_tile = get_tile_from_position(player.global_transform.origin)
+	var player_coordinate = Array2D.to_coordinate(player_tile, tilemap_dimensions)
+
+	var count = 0
+	while(count < tilemap_dimensions.x):
+		var square_indices = get_square_centered_at(player_coordinate, count, dynamic_types)
+		for i in square_indices:
+			tile_instances[i].get_node("MeshInstance").hide()
+			tile_instances[i].get_node("CollisionShape").disabled = true
+		count += 1
+		yield(get_tree().create_timer(0.01), "timeout")
+	
+	# Perform a second stage just to get any that were missing
+	yield(get_tree().create_timer(0.5), "timeout")
+	var current_tile = 0
+	count = 0
+	while (true):
+		while(count < 25):
 			if(current_tile == len(dynamic_children)):
 				return
 			dynamic_children[current_tile].get_node("MeshInstance").hide()
@@ -375,26 +529,6 @@ func set_night():
 			count += 1
 			current_tile += 1
 		yield(get_tree().create_timer(0.01), "timeout")
-
-
-func set_day():
-	var current_tile = 0
-	while (true):
-		var count = 0
-		while(count < 25):
-			if(current_tile == len(dynamic_children)):
-				return
-			dynamic_children[current_tile].get_node("MeshInstance").show()
-			dynamic_children[current_tile].get_node("CollisionShape").disabled = false
-			count += 1
-			current_tile += 1
-		yield(get_tree().create_timer(0.01), "timeout")
-
-
-func deactivate_tiles(types:Array):
-	for tile in tiles:
-		if(types.has(tile['type'])):
-			tile['tile'].deactivate()
 
 
 func activate_tiles(types:Array):

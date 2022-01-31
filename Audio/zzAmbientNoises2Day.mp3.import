@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/zzAmbientNoises2Day.mp3-4dcb93660783e762e5a174c2c9479159.mp3str"
+
+[deps]
+
+source_file="res://Audio/zzAmbientNoises2Day.mp3"
+dest_files=[ "res://.import/zzAmbientNoises2Day.mp3-4dcb93660783e762e5a174c2c9479159.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

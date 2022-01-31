@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/Footsteps-JumpAndLand.mp3-cf8e54fcff1f84eb8bfce54d94696a1a.mp3str"
+
+[deps]
+
+source_file="res://Audio/Footsteps-JumpAndLand.mp3"
+dest_files=[ "res://.import/Footsteps-JumpAndLand.mp3-cf8e54fcff1f84eb8bfce54d94696a1a.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

@@ -1,9 +1,9 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=39 format=2]
 
 [ext_resource path="res://Scripts/Labyrinth.gd" type="Script" id=1]
 [ext_resource path="res://Environment Settings/day_env.tres" type="Environment" id=2]
 [ext_resource path="res://Scenes/Enemy.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Materials/Green.tres" type="Material" id=4]
+[ext_resource path="res://Audio/zzAmbientNoises2Day.mp3" type="AudioStream" id=4]
 [ext_resource path="res://Scripts/DebugCameraController.gd" type="Script" id=5]
 [ext_resource path="res://Scripts/PlayerCam.gd" type="Script" id=6]
 [ext_resource path="res://Scripts/Player.gd" type="Script" id=7]
@@ -17,13 +17,218 @@
 [ext_resource path="res://Scenes/B1.tscn" type="PackedScene" id=15]
 [ext_resource path="res://Scenes/B2.tscn" type="PackedScene" id=16]
 [ext_resource path="res://Scenes/B3.tscn" type="PackedScene" id=17]
-[ext_resource path="res://Meshes/torch_temp.obj" type="ArrayMesh" id=18]
+[ext_resource path="res://Scenes/Torch.tscn" type="PackedScene" id=18]
+[ext_resource path="res://Scenes/Resin Tile.tscn" type="PackedScene" id=19]
+[ext_resource path="res://FireFireFire.png" type="Texture" id=20]
+[ext_resource path="res://Materials/Particles.tres" type="Material" id=21]
+[ext_resource path="res://Scenes/Empty Tile.tscn" type="PackedScene" id=22]
+[ext_resource path="res://Audio/Footsteps-Running.mp3" type="AudioStream" id=23]
+
+[sub_resource type="Animation" id=22]
+resource_name = "Boundary Rise"
+tracks/0/type = "value"
+tracks/0/path = NodePath("../B1:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0.5, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 1.5, -17, 1.5 ), Vector3( 1.5, 0, 1.5 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../B2:translation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.2, 0.7 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 1.5, -17, 1.5 ), Vector3( 1.5, 0, 1.5 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../B3:translation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 1.5, -17, 1.5 ), Vector3( 1.5, 0, 1.5 ) ]
+}
+
+[sub_resource type="Animation" id=23]
+resource_name = "Boundary Sink"
+tracks/0/type = "value"
+tracks/0/path = NodePath("../B1:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.4 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 1.5, 0, 1.5 ), Vector3( 1.5, -17, 1.5 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../B2:translation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0.1, 0.5 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 1.5, 0, 1.5 ), Vector3( 1.5, -17, 1.5 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../B3:translation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0.2, 0.6 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 1.5, 0, 1.5 ), Vector3( 1.5, -17, 1.5 ) ]
+}
+
+[sub_resource type="Animation" id=24]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("../B1:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 1.5, 0, 1.5 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../B2:translation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 1.5, 0, 1.5 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../B3:translation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 1.5, 0, 1.5 ) ]
+}
+
+[sub_resource type="SpatialMaterial" id=16]
+flags_unshaded = true
+vertex_color_use_as_albedo = true
+params_blend_mode = 1
+params_billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+albedo_texture = ExtResource( 20 )
+
+[sub_resource type="QuadMesh" id=20]
 
 [sub_resource type="CylinderShape" id=8]
 
+[sub_resource type="Animation" id=15]
+resource_name = "Black Light Grow"
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath("../BlackLight:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.99, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 3.0, 0.0 ]
+}
+
+[sub_resource type="Animation" id=25]
+resource_name = "Death Cam"
+length = 6.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("../..:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 6 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0.7, 0.441 ), Vector3( 0, -5, 0.441 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../..:rotation_degrees")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 4.3 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0, 0, 0 ), Vector3( 90, 0, 0 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("..:translation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 1.2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0.390192, -0.660456, -0.874278 ), Vector3( 0.390192, -3.48203, 0.215376 ) ]
+}
+
+[sub_resource type="Animation" id=26]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("..:translation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector3( 0.390192, -0.660456, -0.874278 ) ]
+}
+
 [sub_resource type="Animation" id=5]
-resource_name = "test"
-length = 4.0
+resource_name = "Torch Burn"
+length = 5.0
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:light_energy")
 tracks/0/interp = 1
@@ -31,13 +236,122 @@ tracks/0/loop_wrap = true
 tracks/0/imported = false
 tracks/0/enabled = true
 tracks/0/keys = {
-"times": PoolRealArray( 0, 4 ),
-"transitions": PoolRealArray( 0.31864, 1 ),
+"times": PoolRealArray( 0, 0.2, 5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
 "update": 0,
-"values": [ 50.0, 0.0 ]
+"values": [ 0.0, 50.0, 0.0 ]
 }
 
-[sub_resource type="PrismMesh" id=9]
+[sub_resource type="Animation" id=13]
+resource_name = "Torch Idle"
+length = 3.5
+loop = true
+tracks/0/type = "transform"
+tracks/0/path = NodePath("..")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = PoolRealArray(  )
+tracks/1/type = "value"
+tracks/1/path = NodePath("..:rotation_degrees")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 1.7, 3.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( -25.4938, 32.2094, 5.03506 ), Vector3( -27.7097, 32.9181, 3.45259 ), Vector3( -25.4938, 32.2094, 5.03506 ) ]
+}
+
+[sub_resource type="Animation" id=21]
+resource_name = "Torch Particles"
+length = 5.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("../TorchFlames:lifetime")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 5, 5.1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 2.0, 0.01, 2.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("../TorchFlames:process_material:scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 5, 5.1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.4, 0.3, 0.4 ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("../TorchFlames:process_material:scale_random")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 5, 5.1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.5, 0.0, 0.5 ]
+}
+tracks/3/type = "value"
+tracks/3/path = NodePath("../TorchFlames:process_material:emission_sphere_radius")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/keys = {
+"times": PoolRealArray( 0, 5, 5.1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.5, 0.01, 0.5 ]
+}
+
+[sub_resource type="Animation" id=14]
+resource_name = "Torch Take Resin"
+length = 0.5
+tracks/0/type = "transform"
+tracks/0/path = NodePath("..")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = PoolRealArray(  )
+tracks/1/type = "value"
+tracks/1/path = NodePath("..:rotation_degrees")
+tracks/1/interp = 2
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.2, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( -27.7097, 32.9181, 3.45259 ), Vector3( -44.5921, 29.8649, 6.451 ), Vector3( -27.7097, 32.9181, 3.45259 ) ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("..:translation")
+tracks/2/interp = 2
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/keys = {
+"times": PoolRealArray( 0, 0.2, 0.5 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Vector3( 0.534283, -0.660456, -0.658121 ), Vector3( 0.390192, -0.660456, -0.874278 ), Vector3( 0.534283, -0.660456, -0.658121 ) ]
+}
 
 [sub_resource type="PlaneMesh" id=10]
 
@@ -57,12 +371,19 @@ tile_scenes = {
 "Boundary": ExtResource( 13 ),
 "Corner": ExtResource( 11 ),
 "Door": ExtResource( 12 ),
+"Empty": ExtResource( 22 ),
 "Path": ExtResource( 10 ),
+"Resin": ExtResource( 19 ),
 "Wall": ExtResource( 9 )
 }
 NPC_scenes = {
 "Rolem": ExtResource( 3 )
 }
+
+[node name="LabAnimPlayer" type="AnimationPlayer" parent="Labyrinth"]
+"anims/Boundary Rise" = SubResource( 22 )
+"anims/Boundary Sink" = SubResource( 23 )
+anims/RESET = SubResource( 24 )
 
 [node name="Player" type="KinematicBody" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.04503, 0 )
@@ -70,30 +391,100 @@ script = ExtResource( 7 )
 __meta__ = {
 "_edit_group_": true
 }
-jump_strength = 12.0
-movement_speed = 7.5
-gravity = 0.5
+jump_strength = 10.0
+movement_speed = 5.5
+gravity = 0.7
 
 [node name="PlayerCam" type="Camera" parent="Player"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.69836, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0.441 )
 script = ExtResource( 6 )
 
-[node name="TorchMesh" type="MeshInstance" parent="Player/PlayerCam"]
-transform = Transform( 1.53348, -0.466726, 1.19608, 0.0537093, 1.88486, 0.66664, -1.28279, -0.47902, 1.45774, 1.02497, -1.33182, -0.939058 )
-mesh = ExtResource( 18 )
-skeleton = NodePath("../..")
-material/0 = null
+[node name="RayCast" type="RayCast" parent="Player/PlayerCam"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.0186958, 0.0092231 )
+enabled = true
+cast_to = Vector3( 0, 0, -3 )
+collision_mask = 2
+collide_with_areas = true
+collide_with_bodies = false
 
-[node name="CollisionShape" type="CollisionShape" parent="Player"]
-transform = Transform( 0.1, 0, 0, 0, 1, 0, 0, 0, 0.1, 0, 0, 0 )
-shape = SubResource( 8 )
+[node name="Torch" parent="Player/PlayerCam" instance=ExtResource( 18 )]
+transform = Transform( 0.822706, -0.30279, 0.481116, 0.0792197, 0.899148, 0.430413, -0.56292, -0.31599, 0.763722, 0.390192, -0.660456, -0.874278 )
 
-[node name="TorchLight" type="OmniLight" parent="Player"]
+[node name="BlackLight" type="OmniLight" parent="Player/PlayerCam/Torch"]
+transform = Transform( 0.822706, 0.0792197, -0.56292, -0.30279, 0.899149, -0.31599, 0.481116, 0.430414, 0.763723, 0.168201, 0.859548, 0.268772 )
+light_energy = 0.0
+light_negative = true
+omni_range = 51.154
+
+[node name="TorchLight" type="OmniLight" parent="Player/PlayerCam/Torch"]
+transform = Transform( 0.822706, 0.0792197, -0.56292, -0.30279, 0.899149, -0.31599, 0.481117, 0.430413, 0.763722, 0.0499632, 1.061, 0.0109444 )
 light_color = Color( 0.709804, 0.513726, 0.0509804, 1 )
 light_energy = 0.0
 shadow_enabled = true
 omni_range = 11.054
-omni_attenuation = 6.9644
+omni_attenuation = 5.85634
+
+[node name="TorchFlames" type="Particles" parent="Player/PlayerCam/Torch"]
+transform = Transform( 0.194525, -0.0429785, -0.0176868, 0.0345379, 0.184611, -0.0687444, 0.0310982, 0.0638083, 0.18698, -0.0398109, 0.614243, 0.047152 )
+material_override = SubResource( 16 )
+amount = 256
+lifetime = 2.0
+speed_scale = 0.7
+randomness = 1.0
+local_coords = false
+process_material = ExtResource( 21 )
+draw_pass_1 = SubResource( 20 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Player"]
+transform = Transform( 0.1, 0, 0, 0, 1, 0, 0, 0, 0.1, 0, 0.15864, 0.17633 )
+shape = SubResource( 8 )
+
+[node name="CollectResinLabel" type="Label" parent="Player"]
+visible = false
+anchor_left = 0.501
+anchor_top = 0.7
+anchor_right = 0.501
+anchor_bottom = 0.7
+margin_left = -64.024
+margin_top = -6.00003
+margin_right = 65.976
+margin_bottom = 7.99997
+text = "Press E to take resin"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="DeathLabel" type="Label" parent="Player"]
+visible = false
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -56.0
+margin_top = -5.0
+margin_right = 64.0
+margin_bottom = 39.0
+text = "YOU WERE SLAIN
+ Press E to reset"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Player"]
+root_node = NodePath("../PlayerCam/Torch/TorchLight")
+autoplay = "Torch Idle"
+"anims/Black Light Grow" = SubResource( 15 )
+"anims/Death Cam" = SubResource( 25 )
+anims/RESET = SubResource( 26 )
+"anims/Torch Burn" = SubResource( 5 )
+"anims/Torch Idle" = SubResource( 13 )
+"anims/Torch Particles" = SubResource( 21 )
+"anims/Torch Take Resin" = SubResource( 14 )
+
+[node name="AudioPlayer" type="AudioStreamPlayer3D" parent="Player"]
+stream = ExtResource( 23 )
 
 [node name="Sun" type="DirectionalLight" parent="."]
 transform = Transform( 0.290803, -0.956782, -0.00126769, 0.0618847, 0.0174869, 0.99793, -0.95478, -0.290279, 0.0642954, -0.0146017, 9.34512, 0.0110121 )
@@ -102,15 +493,6 @@ shadow_bias = 0.01
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource( 2 )
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-root_node = NodePath("../Player/TorchLight")
-anims/test = SubResource( 5 )
-
-[node name="PathTarget" type="MeshInstance" parent="."]
-transform = Transform( 0.707107, 0, 0.0707107, 0, 0.5, 0, -0.707107, 0, 0.0707107, 0, 1.5, 0 )
-mesh = SubResource( 9 )
-material/0 = ExtResource( 4 )
 
 [node name="LineRenderer" type="ImmediateGeometry" parent="."]
 
@@ -125,7 +507,7 @@ mouse_sensitivity = 0.5
 movement_speed = 20.0
 
 [node name="Ground Plane" type="StaticBody" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, 0 )
 
 [node name="MeshInstance" type="MeshInstance" parent="Ground Plane"]
 transform = Transform( 150, 0, 0, 0, 1, 0, 0, 0, 150, 0, 0, 0 )
@@ -135,11 +517,8 @@ material/0 = null
 [node name="CollisionShape" type="CollisionShape" parent="Ground Plane"]
 shape = SubResource( 11 )
 
-[node name="Timer" type="Timer" parent="."]
-autostart = true
-
 [node name="Sanctum" parent="." instance=ExtResource( 14 )]
-transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 1.5, -1.5, 1.5 )
+transform = Transform( 3.5, 0, 0, 0, 3, 0, 0, 0, 3.5, 1.5, -4, 1.5 )
 
 [node name="B1" parent="." instance=ExtResource( 15 )]
 
@@ -147,4 +526,6 @@ transform = Transform( 3, 0, 0, 0, 3, 0, 0, 0, 3, 1.5, -1.5, 1.5 )
 
 [node name="B3" parent="." instance=ExtResource( 17 )]
 
-[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 4 )
+autoplay = true

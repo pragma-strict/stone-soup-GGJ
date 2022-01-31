@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/GolemNight(Eek!).mp3-a37afb6ad135a5186922b61f228cee7d.mp3str"
+
+[deps]
+
+source_file="res://Audio/GolemNight(Eek!).mp3"
+dest_files=[ "res://.import/GolemNight(Eek!).mp3-a37afb6ad135a5186922b61f228cee7d.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0
